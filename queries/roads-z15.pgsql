@@ -1,10 +1,18 @@
 SELECT
     osm_id AS __id__,
-    {% filter geometry %}way{% endfilter %} AS __geometry__,
+    way AS __geometry__,
+    'openstreetmap' AS source,
     name,
+    aeroway,
+    bridge,
+    highway,
+    layer,
+    railway,
+    tunnel,
+    oneway,
     ref,
     operator,
-    route AS kind,
+    route,
     tags->'type' AS type,
     tags->'colour' AS colour,
     tags->'network' AS network,
@@ -21,5 +29,4 @@ SELECT
 FROM planet_osm_line
 
 WHERE
-    {{ bounds|bbox_filter('way') }}
-    AND mz_calculate_transit_level(route) <= {{ zoom }}
+    mz_calculate_road_level(highway, railway, aeroway, tags->'network') <= 15

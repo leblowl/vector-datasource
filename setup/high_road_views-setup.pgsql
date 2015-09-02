@@ -106,10 +106,15 @@ WHERE f_table_name
 
 
 CREATE VIEW planet_osm_line_z10 AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway') THEN 'highway'
                WHEN highway IN ('trunk', 'primary') THEN 'major_road'
@@ -148,10 +153,15 @@ ORDER BY priority DESC, is_outline DESC;
 
 
 CREATE VIEW planet_osm_line_z11 AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway') THEN 'highway'
                WHEN highway IN ('trunk', 'primary') THEN 'major_road'
@@ -190,10 +200,15 @@ ORDER BY priority DESC, is_outline DESC;
 
 
 CREATE VIEW planet_osm_line_z12 AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway', 'motorway_link') THEN 'highway'
                WHEN highway IN ('trunk', 'trunk_link', 'secondary', 'primary') THEN 'major_road'
@@ -234,10 +249,15 @@ ORDER BY priority DESC, is_outline DESC;
 
 
 CREATE VIEW planet_osm_line_z13 AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway', 'motorway_link') THEN 'highway'
                WHEN highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link') THEN 'major_road'
@@ -279,10 +299,15 @@ ORDER BY priority DESC, is_outline DESC;
 
 
 CREATE VIEW planet_osm_line_z14 AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway', 'motorway_link') THEN 'highway'
                WHEN highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link') THEN 'major_road'
@@ -355,10 +380,15 @@ ORDER BY grouping DESC, is_outline DESC, explicit_layer ASC, is_casing DESC, pri
 
 
 CREATE VIEW planet_osm_line_z15plus AS
-  SELECT way,
+  SELECT osm_id,
+         way,
+         name,
          highway,
          railway,
          render,
+         ref,
+         route,
+         tags,
 
          (CASE WHEN highway IN ('motorway', 'motorway_link') THEN 'highway'
                WHEN highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link') THEN 'major_road'
@@ -397,7 +427,8 @@ CREATE VIEW planet_osm_line_z15plus AS
   FROM (
     
       SELECT 'outline' AS render, 1 AS is_outline, 1 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer
+             way, highway, NULL AS railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
@@ -407,7 +438,8 @@ CREATE VIEW planet_osm_line_z15plus AS
       UNION
       
       SELECT 'casing' AS render, 0 AS is_outline, 1 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer
+             way, highway, NULL AS railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
@@ -417,7 +449,8 @@ CREATE VIEW planet_osm_line_z15plus AS
       UNION
       
       SELECT 'inline' AS render, 0 AS is_outline, 0 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer
+             way, highway, NULL AS railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
@@ -427,21 +460,24 @@ CREATE VIEW planet_osm_line_z15plus AS
       UNION
       
       SELECT 'outline' AS render, 1 AS is_outline, 1 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer
+             way, NULL AS highway, railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
     
       UNION
       
       SELECT 'casing' AS render, 0 AS is_outline, 1 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer
+             way, NULL AS highway, railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
     
       UNION
       
       SELECT 'inline' AS render, 0 AS is_outline, 0 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer
+             way, NULL AS highway, railway, tunnel, bridge, layer,
+             osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
 

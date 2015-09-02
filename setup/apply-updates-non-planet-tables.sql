@@ -46,7 +46,4 @@ ALTER TABLE water_polygons ADD COLUMN way_area REAL;
 UPDATE water_polygons SET way_area=ST_Area(the_geom) WHERE the_geom IS NOT NULL;
 CREATE INDEX water_polygons_wayarea_index ON water_polygons(way_area);
 
-DROP INDEX IF EXISTS ne_10m_populated_places_scalerank_index;
-CREATE INDEX ne_10m_populated_places_scalerank_index ON ne_10m_populated_places(scalerank);
-
 END $$;

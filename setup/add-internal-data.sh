@@ -1,0 +1,26 @@
+#!/bin/sh
+
+import_shapefile(){
+	shp2pgsql -dID -s 900913 -W Windows-1252 -g the_geom "$@"
+}
+
+ls *.zip | xargs -n1 unzip
+
+import_shapefile ne_10m_lakes-merc.shp ne_10m_lakes
+import_shapefile ne_10m_ocean-merc.shp ne_10m_ocean
+import_shapefile ne_10m_playas-merc.shp ne_10m_playas
+import_shapefile ne_110m_lakes-merc.shp ne_110m_lakes
+import_shapefile ne_110m_ocean-merc.shp ne_110m_ocean
+import_shapefile ne_50m_lakes-merc.shp ne_50m_lakes
+import_shapefile ne_50m_ocean-merc.shp ne_50m_ocean
+import_shapefile ne_50m_playas-merc.shp ne_50m_playas
+import_shapefile ne_10m_land-tiled-merc.shp ne_10m_land
+import_shapefile ne_50m_land-merc.shp ne_50m_land
+import_shapefile ne_110m_land-merc.shp ne_110m_land
+import_shapefile -W UTF-8 ne_110m_admin_0_boundary_lines_land-merc.shp ne_110m_admin_0_boundary_lines_land
+import_shapefile -W UTF-8 ne_50m_admin_0_boundary_lines_land-merc.shp ne_50m_admin_0_boundary_lines_land
+import_shapefile -W UTF-8 ne_50m_admin_1_states_provinces_lines-merc.shp ne_50m_admin_1_states_provinces_lines
+import_shapefile -W UTF-8 ne_10m_admin_0_boundary_lines_land-merc.shp ne_10m_admin_0_boundary_lines_land
+import_shapefile -W UTF-8 ne_10m_admin_1_states_provinces_lines-merc.shp ne_10m_admin_1_states_provinces_lines
+
+rm *.dbf *.prj *.shp *.shx *.cpg

@@ -1,9 +1,3 @@
-CREATE TABLE matviews (
-  mv_name NAME NOT NULL PRIMARY KEY
-  , v_name NAME NOT NULL
-  , last_refresh TIMESTAMP WITH TIME ZONE
-);
-
 SELECT create_matview('planet_osm_line_z10_mv', 'planet_osm_line_z10');
 SELECT create_matview('planet_osm_line_z11_mv', 'planet_osm_line_z11');
 SELECT create_matview('planet_osm_line_z12_mv', 'planet_osm_line_z12');

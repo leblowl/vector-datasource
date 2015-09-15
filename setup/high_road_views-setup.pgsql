@@ -48,25 +48,6 @@
 -- script below and replace is with your chosen prefix.
 --
 -- 
--- Rendering
--- 
--- In order to work well with Mapnik, Cascadenik and Carto and make it easy to
--- add road casings that look physically correct, High Road returns multiple
--- copies of each geometry with a "render" attribute.
--- 
--- Render="outline" is used to attach casings around entire classes of roads,
--- and ensures that multiple carriageways and complex interchanges merge cleanly
--- to reduce map noise.
--- 
--- Render="inline" is used for the inner lines of the roads themselves, and
--- represents the road surface.
--- 
--- Render="casing" is present only at zoom level 14 and above, and is used to
--- introduce local outlines to roads that overlap one another. An example use of
--- features with this attribute would be to correctly show overpasses in a
--- complex highway interchange.
--- 
--- 
 -- Inclusion
 -- 
 -- At zoom levels 10 and 11, local and residential streets are omitted. Bold,
@@ -88,30 +69,28 @@
 
 BEGIN;
 
-DROP VIEW IF EXISTS planet_osm_line_z15plus_big;
-DROP VIEW IF EXISTS planet_osm_line_z15plus_small;
-DROP VIEW IF EXISTS planet_osm_line_z15plus;
-DROP VIEW IF EXISTS planet_osm_line_z14;
-DROP VIEW IF EXISTS planet_osm_line_z13;
-DROP VIEW IF EXISTS planet_osm_line_z12;
-DROP VIEW IF EXISTS planet_osm_line_z11;
-DROP VIEW IF EXISTS planet_osm_line_z10;
+DROP VIEW IF EXISTS roads_z15plus_big;
+DROP VIEW IF EXISTS roads_z15plus_small;
+DROP VIEW IF EXISTS roads_z15plus;
+DROP VIEW IF EXISTS roads_z14;
+DROP VIEW IF EXISTS roads_z13;
+DROP VIEW IF EXISTS roads_z12;
+DROP VIEW IF EXISTS roads_z11;
+DROP VIEW IF EXISTS roads_z10;
 
 DELETE FROM geometry_columns
 WHERE f_table_name
-   IN ('planet_osm_line_z15plus_big', 'planet_osm_line_z15plus_small',
-       'planet_osm_line_z15plus', 'planet_osm_line_z14', 'planet_osm_line_z13',
-       'planet_osm_line_z12', 'planet_osm_line_z11', 'planet_osm_line_z10');
+   IN ('roads_z15plus_big', 'roads_z15plus_small', 'roads_z15plus',
+       'roads_z14', 'roads_z13', 'roads_z12', 'roads_z11', 'roads_z10');
 
 
 
-CREATE VIEW planet_osm_line_z10 AS
+CREATE VIEW roads_z10 AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -132,15 +111,7 @@ CREATE VIEW planet_osm_line_z10 AS
                ELSE 99 END) AS priority
   FROM (
 
-      SELECT *, 'outline' AS render, 1 AS is_outline
-      FROM planet_osm_line
-      WHERE highway IN ('motorway')
-         OR highway IN ('trunk', 'primary')
-         OR highway IN ('secondary')
-    
-      UNION
-      
-      SELECT *, 'inline' AS render, 0 AS is_outline
+      SELECT *
       FROM planet_osm_line
       WHERE highway IN ('motorway')
          OR highway IN ('trunk', 'primary')
@@ -148,17 +119,16 @@ CREATE VIEW planet_osm_line_z10 AS
 
   ) AS roads
 
-ORDER BY priority DESC, is_outline DESC;
+ORDER BY priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z11 AS
+CREATE VIEW roads_z11 AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -179,15 +149,7 @@ CREATE VIEW planet_osm_line_z11 AS
                ELSE 99 END) AS priority
   FROM (
 
-      SELECT *, 'outline' AS render, 1 AS is_outline
-      FROM planet_osm_line
-      WHERE highway IN ('motorway')
-         OR highway IN ('trunk', 'primary')
-         OR highway IN ('secondary', 'tertiary')
-    
-      UNION
-      
-      SELECT *, 'inline' AS render, 0 AS is_outline
+      SELECT *
       FROM planet_osm_line
       WHERE highway IN ('motorway')
          OR highway IN ('trunk', 'primary')
@@ -195,17 +157,16 @@ CREATE VIEW planet_osm_line_z11 AS
 
   ) AS roads
 
-ORDER BY priority DESC, is_outline DESC;
+ORDER BY priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z12 AS
+CREATE VIEW roads_z12 AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -228,15 +189,7 @@ CREATE VIEW planet_osm_line_z12 AS
                ELSE 99 END) AS priority
   FROM (
     
-      SELECT *, 'outline' AS render, 1 AS is_outline
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'secondary', 'primary')
-         OR highway IN ('tertiary', 'residential', 'unclassified', 'road', 'unclassified')
-    
-      UNION
-      
-      SELECT *, 'inline' AS render, 0 AS is_outline
+      SELECT *
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'secondary', 'primary')
@@ -244,17 +197,16 @@ CREATE VIEW planet_osm_line_z12 AS
 
   ) AS roads
 
-ORDER BY priority DESC, is_outline DESC;
+ORDER BY priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z13 AS
+CREATE VIEW roads_z13 AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -278,15 +230,7 @@ CREATE VIEW planet_osm_line_z13 AS
                ELSE 99 END) AS priority
   FROM (
     
-      SELECT *, 'outline' AS render, 1 AS is_outline
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary')
-         OR highway IN ('residential', 'unclassified', 'road', 'unclassified')
-    
-      UNION
-      
-      SELECT *, 'inline' AS render, 0 AS is_outline
+      SELECT *
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary')
@@ -294,17 +238,16 @@ CREATE VIEW planet_osm_line_z13 AS
 
   ) AS roads
 
-ORDER BY priority DESC, is_outline DESC;
+ORDER BY priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z14 AS
+CREATE VIEW roads_z14 AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -342,25 +285,7 @@ CREATE VIEW planet_osm_line_z14 AS
                ELSE 99 END) AS priority
   FROM (
     
-      SELECT *, 'outline' AS render, 1 AS is_outline, 1 AS is_casing
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
-         OR highway IN ('residential', 'unclassified', 'road', 'minor')
-         OR railway IN ('rail')
-    
-      UNION
-      
-      SELECT *, 'casing' AS render, 0 AS is_outline, 1 AS is_casing
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
-         OR highway IN ('residential', 'unclassified', 'road', 'minor')
-         OR railway IN ('rail')
-    
-      UNION
-      
-      SELECT *, 'inline' AS render, 0 AS is_outline, 0 AS is_casing
+      SELECT *
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
          OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
@@ -375,17 +300,16 @@ CREATE VIEW planet_osm_line_z14 AS
 -- Outlines go behind everything else.
 -- Highways are separated from other roads and drawn on top.
 --
-ORDER BY grouping DESC, is_outline DESC, explicit_layer ASC, is_casing DESC, priority DESC;
+ORDER BY grouping DESC, explicit_layer ASC, priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z15plus AS
+CREATE VIEW roads_z15plus AS
   SELECT osm_id,
          way,
          name,
          highway,
          railway,
-         render,
          ref,
          route,
          tags,
@@ -426,8 +350,7 @@ CREATE VIEW planet_osm_line_z15plus AS
                ELSE 99 END) AS priority
   FROM (
     
-      SELECT 'outline' AS render, 1 AS is_outline, 1 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer,
+      SELECT way, highway, NULL AS railway, tunnel, bridge, layer,
              osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE highway IN ('motorway', 'motorway_link')
@@ -437,46 +360,7 @@ CREATE VIEW planet_osm_line_z15plus AS
     
       UNION
       
-      SELECT 'casing' AS render, 0 AS is_outline, 1 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer,
-             osm_id, name, ref, route, tags
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
-         OR highway IN ('residential', 'unclassified', 'road', 'unclassified', 'service', 'minor')
-         OR highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway')
-    
-      UNION
-      
-      SELECT 'inline' AS render, 0 AS is_outline, 0 AS is_casing,
-             way, highway, NULL AS railway, tunnel, bridge, layer,
-             osm_id, name, ref, route, tags
-      FROM planet_osm_line
-      WHERE highway IN ('motorway', 'motorway_link')
-         OR highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link')
-         OR highway IN ('residential', 'unclassified', 'road', 'unclassified', 'service', 'minor')
-         OR highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway')
-    
-      UNION
-      
-      SELECT 'outline' AS render, 1 AS is_outline, 1 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer,
-             osm_id, name, ref, route, tags
-      FROM planet_osm_line
-      WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
-    
-      UNION
-      
-      SELECT 'casing' AS render, 0 AS is_outline, 1 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer,
-             osm_id, name, ref, route, tags
-      FROM planet_osm_line
-      WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
-    
-      UNION
-      
-      SELECT 'inline' AS render, 0 AS is_outline, 0 AS is_casing,
-             way, NULL AS highway, railway, tunnel, bridge, layer,
+      SELECT way, NULL AS highway, railway, tunnel, bridge, layer,
              osm_id, name, ref, route, tags
       FROM planet_osm_line
       WHERE railway IN ('rail', 'tram', 'light_rail', 'narrow_guage', 'monorail')
@@ -484,27 +368,25 @@ CREATE VIEW planet_osm_line_z15plus AS
   ) AS roads
 
 -- Large roads are drawn on top of smaller roads.
--- Casings for segments are underneath corresponding inlines.
 -- Implicit physical layers (tunnels, bridges) are drawn in order.
 -- Explicit physical layers are drawn in order.
--- Outlines go behind everything else.
 --
-ORDER BY is_outline DESC, explicit_layer ASC, implied_layer ASC, is_casing DESC, priority DESC;
+ORDER BY explicit_layer ASC, implied_layer ASC, priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z15plus_big AS
+CREATE VIEW roads_z15plus_big AS
   SELECT *
-  FROM planet_osm_line_z15plus
+  FROM roads_z15plus
   WHERE highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link')
      OR highway IN ('secondary', 'secondary_link', 'tertiary', 'tertiary_link')
   ORDER BY priority DESC;
 
 
 
-CREATE VIEW planet_osm_line_z15plus_small AS
+CREATE VIEW roads_z15plus_small AS
   SELECT *
-  FROM planet_osm_line_z15plus
+  FROM roads_z15plus
   WHERE highway IN ('residential', 'unclassified', 'road', 'unclassified', 'service', 'minor')
      OR highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway')
   ORDER BY priority DESC;
@@ -514,14 +396,14 @@ CREATE VIEW planet_osm_line_z15plus_small AS
 INSERT INTO geometry_columns
 (f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
 VALUES
-    ('', 'public', 'planet_osm_line_z10', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z11', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z12', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z13', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z14', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z15plus', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z15plus_big', 'way', 2, 900913, 'LINESTRING'),
-    ('', 'public', 'planet_osm_line_z15plus_small', 'way', 2, 900913, 'LINESTRING');
+    ('', 'public', 'roads_z10', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z11', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z12', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z13', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z14', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z15plus', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z15plus_big', 'way', 2, 900913, 'LINESTRING'),
+    ('', 'public', 'roads_z15plus_small', 'way', 2, 900913, 'LINESTRING');
 
 
 

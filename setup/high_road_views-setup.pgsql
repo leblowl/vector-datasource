@@ -69,14 +69,14 @@
 
 BEGIN;
 
-DROP VIEW IF EXISTS roads_z15plus_big;
-DROP VIEW IF EXISTS roads_z15plus_small;
-DROP VIEW IF EXISTS roads_z15plus;
-DROP VIEW IF EXISTS roads_z14;
-DROP VIEW IF EXISTS roads_z13;
-DROP VIEW IF EXISTS roads_z12;
-DROP VIEW IF EXISTS roads_z11;
-DROP VIEW IF EXISTS roads_z10;
+DROP MATERIALIZED VIEW IF EXISTS roads_z15plus_big;
+DROP MATERIALIZED VIEW IF EXISTS roads_z15plus_small;
+DROP MATERIALIZED VIEW IF EXISTS roads_z15plus;
+DROP MATERIALIZED VIEW IF EXISTS roads_z14;
+DROP MATERIALIZED VIEW IF EXISTS roads_z13;
+DROP MATERIALIZED VIEW IF EXISTS roads_z12;
+DROP MATERIALIZED VIEW IF EXISTS roads_z11;
+DROP MATERIALIZED VIEW IF EXISTS roads_z10;
 
 DELETE FROM geometry_columns
 WHERE f_table_name
@@ -84,8 +84,7 @@ WHERE f_table_name
        'roads_z14', 'roads_z13', 'roads_z12', 'roads_z11', 'roads_z10');
 
 
-
-CREATE VIEW roads_z10 AS
+CREATE MATERIALIZED VIEW roads_z10 AS
   SELECT osm_id,
          way,
          name,
@@ -122,8 +121,7 @@ CREATE VIEW roads_z10 AS
 ORDER BY priority DESC;
 
 
-
-CREATE VIEW roads_z11 AS
+CREATE MATERIALIZED VIEW roads_z11 AS
   SELECT osm_id,
          way,
          name,
@@ -160,8 +158,7 @@ CREATE VIEW roads_z11 AS
 ORDER BY priority DESC;
 
 
-
-CREATE VIEW roads_z12 AS
+CREATE MATERIALIZED VIEW roads_z12 AS
   SELECT osm_id,
          way,
          name,
@@ -200,8 +197,7 @@ CREATE VIEW roads_z12 AS
 ORDER BY priority DESC;
 
 
-
-CREATE VIEW roads_z13 AS
+CREATE MATERIALIZED VIEW roads_z13 AS
   SELECT osm_id,
          way,
          name,
@@ -241,8 +237,7 @@ CREATE VIEW roads_z13 AS
 ORDER BY priority DESC;
 
 
-
-CREATE VIEW roads_z14 AS
+CREATE MATERIALIZED VIEW roads_z14 AS
   SELECT osm_id,
          way,
          name,
@@ -270,7 +265,9 @@ CREATE VIEW roads_z14 AS
                ELSE 99 END) AS grouping,
 
          -- explicit layer is the physical layering of under- and overpasses
-         (CASE WHEN layer ~ E'^-?[[:digit:]]+(\.[[:digit:]]+)?$' THEN CAST (layer AS FLOAT)
+         -- always takes the first digit -- ex: '1;2' will return 1
+         (CASE WHEN layer ~ '^-?\d'
+               THEN CAST (SUBSTRING(layer, '^-?\d') AS FLOAT)
                ELSE 0
                END) AS explicit_layer,
 
@@ -303,8 +300,7 @@ CREATE VIEW roads_z14 AS
 ORDER BY grouping DESC, explicit_layer ASC, priority DESC;
 
 
-
-CREATE VIEW roads_z15plus AS
+CREATE MATERIALIZED VIEW roads_z15plus AS
   SELECT osm_id,
          way,
          name,
@@ -328,7 +324,9 @@ CREATE VIEW roads_z15plus AS
                ELSE 'no' END) AS is_bridge,
 
          -- explicit layer is the physical layering of under- and overpasses
-         (CASE WHEN layer ~ E'^-?[[:digit:]]+(\.[[:digit:]]+)?$' THEN CAST (layer AS FLOAT)
+         -- always takes the first digit -- ex: '1;2' will return 1
+         (CASE WHEN layer ~ '^-?\d'
+               THEN CAST (SUBSTRING(layer, '^-?\d') AS FLOAT)
                ELSE 0
                END) AS explicit_layer,
 
@@ -374,8 +372,7 @@ CREATE VIEW roads_z15plus AS
 ORDER BY explicit_layer ASC, implied_layer ASC, priority DESC;
 
 
-
-CREATE VIEW roads_z15plus_big AS
+CREATE MATERIALIZED VIEW roads_z15plus_big AS
   SELECT *
   FROM roads_z15plus
   WHERE highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link')
@@ -383,14 +380,12 @@ CREATE VIEW roads_z15plus_big AS
   ORDER BY priority DESC;
 
 
-
-CREATE VIEW roads_z15plus_small AS
+CREATE MATERIALIZED VIEW roads_z15plus_small AS
   SELECT *
   FROM roads_z15plus
   WHERE highway IN ('residential', 'unclassified', 'road', 'unclassified', 'service', 'minor')
      OR highway IN ('footpath', 'track', 'footway', 'steps', 'pedestrian', 'path', 'cycleway')
   ORDER BY priority DESC;
-
 
 
 INSERT INTO geometry_columns
@@ -405,6 +400,15 @@ VALUES
     ('', 'public', 'roads_z15plus_big', 'way', 2, 900913, 'LINESTRING'),
     ('', 'public', 'roads_z15plus_small', 'way', 2, 900913, 'LINESTRING');
 
-
+CREATE INDEX roads_z10_way_idx ON roads_z10 USING GIST(way);
+CREATE INDEX roads_z11_way_idx ON roads_z11 USING GIST(way);
+CREATE INDEX roads_z12_way_idx ON roads_z12 USING GIST(way);
+CREATE INDEX roads_z13_way_idx ON roads_z13 USING GIST(way);
+CREATE INDEX roads_z14_way_idx ON roads_z14 USING GIST(way);
+CREATE INDEX roads_z15plus_way_idx ON roads_z15plus USING GIST(way);
+CREATE INDEX roads_z15plus_big_way_idx ON roads_z15plus_big USING GIST(way);
+CREATE INDEX roads_z15plus_small_way_idx ON roads_z15plus_small USING GIST(way);
 
 COMMIT;
+
+VACUUM ANALYZE;

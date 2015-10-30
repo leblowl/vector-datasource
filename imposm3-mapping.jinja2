@@ -1,0 +1,113 @@
+{% set roads_fields %}
+   "fields": [
+        {
+          "name": "osm_id",
+          "type": "id"
+        },
+        {
+          "name": "way",
+          "type": "geometry"
+        },
+        {
+          "name": "class",
+          "type": "mapping_key"
+        },
+        {
+          "name": "type",
+          "type": "mapping_value"
+        },
+        {
+          "key": "name",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "key": "tunnel",
+          "name": "tunnel",
+          "type": "boolint"
+        },
+        {
+          "key": "bridge",
+          "name": "bridge",
+          "type": "boolint"
+        },
+        {
+          "key": "oneway",
+          "name": "oneway",
+          "type": "direction"
+        },
+        {
+          "key": "ref",
+          "name": "ref",
+          "type": "string"
+        },
+        {
+          "key": "layer",
+          "name": "z_order",
+          "type": "wayzorder"
+        },
+        {
+          "key": "access",
+          "name": "access",
+          "type": "string"
+        },
+        {
+          "key": "service",
+          "name": "service",
+          "type": "string"
+        }
+      ]
+{% endset %}
+
+{
+  "tables": {
+    "roads_z10": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["motorway", "trunk", "primary", "secondary"]
+      }
+    },
+    "roads_z11": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["motorway", "trunk", "primary", "secondary", "tertiary"]
+      }
+    },
+    "roads_z12": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
+                    "primary", "secondary", "tertiary", "residential",
+                    "unclassified", "road"]
+      }
+    },
+    "roads_z13": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
+                    "primary", "primary_link", "secondary", "secondary_link",
+                    "tertiary", "residential", "unclassified", "road"]
+      }
+    },
+    "roads_z14": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
+                    "primary", "primary_link", "secondary", "secondary_link",
+                    "tertiary", "tertiary_link", "residential", "unclassified", "road", "minor"]
+      }
+    },
+    "roads_z15": {
+      "type": "linestring",
+      {{ roads_fields }},
+      "mapping": {
+        "highway": ["__any__"]
+      }
+    }
+  }
+}

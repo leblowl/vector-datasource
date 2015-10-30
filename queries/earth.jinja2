@@ -1,0 +1,16 @@
+{% set earth_select %}
+   SELECT 
+      'base' AS land,
+      the_geom AS __geometry__,
+      gid AS __id__
+{% endset %}
+
+{% macro earth(zoom) -%}
+   {% if zoom >= 6 %}
+      {{ earth_select }} FROM land_polygons
+   {% elif zoom >= 4 %}
+      {{ earth_select }} FROM ne_10m_land_tiled
+   {% elif zoom >= 0 %}
+      {{ earth_select }} FROM ne_50m_land
+   {% endif %}
+{%- endmacro %}

@@ -67,6 +67,11 @@
 -- at this zoom level as well.
 --
 
+SET work_mem TO '64GB';
+SET maintenance_work_mem TO '32GB';
+SHOW work_mem;
+SHOW maintenance_work_mem;
+
 BEGIN;
 
 DROP MATERIALIZED VIEW IF EXISTS roads_z15plus_big;

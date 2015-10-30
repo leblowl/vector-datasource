@@ -1,0 +1,25 @@
+{% set roads_select %}
+   SELECT
+         osm_id AS __id__,
+         'osm' as source,
+         way AS __geometry__,
+         type,
+         name,
+         tunnel,
+         bridge,
+         oneway,
+         ref,
+         z_order,
+         access,
+         service
+{% endset %}
+
+{% macro roads(zoom) -%}
+   {% if zoom >= 15 %}
+        {{ roads_select }} FROM import.osm_roads_z15
+   {% elif zoom >= 10 %}
+        {{ roads_select }} FROM {{ "import.osm_roads_z" ~ zoom }}
+   {% elif zoom >= 8 %}
+        {{ roads_select }} FROM import.osm_roads_z10
+   {% endif %}
+{%- endmacro %}

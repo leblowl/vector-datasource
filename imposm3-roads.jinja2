@@ -60,28 +60,37 @@
 {% endset %}
 
 {
-  "tables": {
-    "roads_z10": {
-      "type": "linestring",
-      {{ roads_fields }},
-      "mapping": {
-        "highway": ["motorway", "trunk", "primary", "secondary"]
-      }
+  "generalized_tables": {
+    "roads_z5": {
+      "source": "roads_z10",
+      "sql_filter": "highway in ('motorway', 'trunk')",
+      "tolerance": 50
     },
-    "roads_z11": {
+    "roads_z6": {
+      "source": "roads_z10",
+      "sql_filter": "highway in ('motorway', 'trunk', 'primary')",
+      "tolerance": 25
+    },
+    "roads_z8": {
+      "source": "roads_z10",
+      "sql_filter": "highway in ('motorway', 'trunk', 'primary', 'secondary')",
+      "tolerance": 5
+    }
+  },
+  "tables": {      
+    "roads_z10": {
       "type": "linestring",
       {{ roads_fields }},
       "mapping": {
         "highway": ["motorway", "trunk", "primary", "secondary", "tertiary"]
       }
     },
-    "roads_z12": {
+    "roads_z11": {
       "type": "linestring",
       {{ roads_fields }},
       "mapping": {
         "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
-                    "primary", "secondary", "tertiary", "residential",
-                    "unclassified", "road"]
+                    "primary", "secondary", "tertiary"]
       }
     },
     "roads_z13": {
@@ -90,23 +99,8 @@
       "mapping": {
         "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
                     "primary", "primary_link", "secondary", "secondary_link",
-                    "tertiary", "residential", "unclassified", "road"]
-      }
-    },
-    "roads_z14": {
-      "type": "linestring",
-      {{ roads_fields }},
-      "mapping": {
-        "highway": ["motorway", "motorway_link", "trunk", "trunk_link",
-                    "primary", "primary_link", "secondary", "secondary_link",
-                    "tertiary", "tertiary_link", "residential", "unclassified", "road", "minor"]
-      }
-    },
-    "roads_z15": {
-      "type": "linestring",
-      {{ roads_fields }},
-      "mapping": {
-        "highway": ["__any__"]
+                    "tertiary", "tertiary_link", "unclassified", "residential",
+                    "service", "living_street", "track", "road"]
       }
     }
   }

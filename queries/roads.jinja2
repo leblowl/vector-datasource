@@ -15,11 +15,9 @@
 {% endset %}
 
 {% macro roads(zoom) -%}
-   {% if zoom >= 15 %}
-        {{ roads_select }} FROM import.osm_roads_z15
-   {% elif zoom >= 10 %}
+   {% if zoom >= 13 %}
+        {{ roads_select }} FROM import.osm_roads_z13
+   {% elif zoom >= 5 %}
         {{ roads_select }} FROM {{ "import.osm_roads_z" ~ zoom }}
-   {% elif zoom >= 8 %}
-        {{ roads_select }} FROM import.osm_roads_z10
    {% endif %}
 {%- endmacro %}
